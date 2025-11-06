@@ -1,0 +1,11 @@
+version: v2
+modules:
+  - path: pkg
+lint:
+  use:
+    - BASIC
+breaking:
+  use:
+   - FILE
+deps:
+  - buf.build/googleapis/googleapis

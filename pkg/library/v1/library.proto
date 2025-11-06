@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package library.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/timestamp.proto";
+
+
+option go_package = "github.com/joematpal/library_rpc/pkg/library/v1;library_v1";
+
+
+// A simple service for managing books.
+service LibraryService {
+  // Adds a new book to the library
+  rpc AddBook(AddBookRequest) returns (AddBookResponse) {
+    option (google.api.http) = {
+        post: "/api/v1/books"
+        body: "*"
+    };
+  }
+
+  // Gets a book by ID
+  rpc GetBook(GetBookRequest) returns (GetBookResponse) {
+    option (google.api.http) = {
+        get: "/api/v1/books/{id}"
+    };
+  }
+}
+
+// Book message
+message Book {
+  string book_id = 1;
+  string title = 2;
+  string author = 3;
+}
+
+// Requests & responses
+message AddBookRequest {
+  Book book = 1;
+}
+
+message AddBookResponse {
+  string id = 1;
+}
+
+message GetBookRequest {
+  string id = 1;
+}
+
+message GetBookResponse {
+  Book book = 1;
+}

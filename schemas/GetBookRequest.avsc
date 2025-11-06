@@ -1,0 +1,12 @@
+{
+  "type": "record",
+  "name": "GetBookRequest",
+  "namespace": "library.v1",
+  "fields": [
+    {
+      "name": "id",
+      "type": "string",
+      "default": ""
+    }
+  ]
+}

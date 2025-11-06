@@ -1,0 +1,22 @@
+{
+  "type": "record",
+  "name": "Book",
+  "namespace": "library.v1",
+  "fields": [
+    {
+      "name": "book_id",
+      "type": "string",
+      "default": ""
+    },
+    {
+      "name": "title",
+      "type": "string",
+      "default": ""
+    },
+    {
+      "name": "author",
+      "type": "string",
+      "default": ""
+    }
+  ]
+}
