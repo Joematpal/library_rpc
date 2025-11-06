@@ -152,7 +152,7 @@ components:
                     type: string
                 isbn:
                     type: string
-                    description: ISBN validation - must be 10 or 13 digits (with optional hyphens)
+                    description: ISBN validation - simplified pattern for 10 or 13 digit ISBNs
                 title:
                     type: string
                     description: Title validation - required, non-empty, max 200 characters

@@ -67,11 +67,11 @@ message Author {
 message Book {
   string book_id = 1;  // Internal database ID (generated)
   
-  // ISBN validation - must be 10 or 13 digits (with optional hyphens)
+  // ISBN validation - simplified pattern for 10 or 13 digit ISBNs
   string isbn = 2 [(buf.validate.field).string = {
-    pattern: "^(?:ISBN(?:-1[03])?:? )?(?=[0-9X]{10}$|(?=(?:[0-9]+[- ]){3})[- 0-9X]{13}$|97[89][0-9]{10}$|(?=(?:[0-9]+[- ]){4})[- 0-9]{17}$)(?:97[89][- ]?)?[0-9]{1,5}[- ]?[0-9]+[- ]?[0-9]+[- ]?[0-9X]$"
+    pattern: "^(97[89])?[0-9]{9}[0-9X]$|^97[89]-?[0-9]{1,5}-?[0-9]{1,7}-?[0-9]{1,6}-?[0-9X]$"
     min_len: 10
-    max_len: 17
+    max_len: 20
   }];
   
   // Title validation - required, non-empty, max 200 characters

@@ -81,7 +81,7 @@ func (x *Author) GetFamilyName() string {
 type Book struct {
 	state  protoimpl.MessageState `protogen:"open.v1"`
 	BookId string                 `protobuf:"bytes,1,opt,name=book_id,json=bookId,proto3" json:"book_id,omitempty"` // Internal database ID (generated)
-	// ISBN validation - must be 10 or 13 digits (with optional hyphens)
+	// ISBN validation - simplified pattern for 10 or 13 digit ISBNs
 	Isbn string `protobuf:"bytes,2,opt,name=isbn,proto3" json:"isbn,omitempty"`
 	// Title validation - required, non-empty, max 200 characters
 	Title string `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty"`
@@ -433,11 +433,11 @@ const file_library_v1_library_proto_rawDesc = "" +
 	"\n" +
 	"given_name\x18\x01 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x182R\tgivenName\x12*\n" +
 	"\vfamily_name\x18\x02 \x01(\tB\t\xbaH\x06r\x04\x10\x01\x182R\n" +
-	"familyName\"\xce\x03\n" +
+	"familyName\"\xde\x02\n" +
 	"\x04Book\x12\x17\n" +
-	"\abook_id\x18\x01 \x01(\tR\x06bookId\x12\xdc\x01\n" +
-	"\x04isbn\x18\x02 \x01(\tB\xc7\x01\xbaH\xc3\x01r\xc0\x01\x10\n" +
-	"\x18\x112\xb9\x01^(?:ISBN(?:-1[03])?:? )?(?=[0-9X]{10}$|(?=(?:[0-9]+[- ]){3})[- 0-9X]{13}$|97[89][0-9]{10}$|(?=(?:[0-9]+[- ]){4})[- 0-9]{17}$)(?:97[89][- ]?)?[0-9]{1,5}[- ]?[0-9]+[- ]?[0-9]+[- ]?[0-9X]$R\x04isbn\x12 \n" +
+	"\abook_id\x18\x01 \x01(\tR\x06bookId\x12m\n" +
+	"\x04isbn\x18\x02 \x01(\tBY\xbaHVrT\x10\n" +
+	"\x18\x142N^(97[89])?[0-9]{9}[0-9X]$|^97[89]-?[0-9]{1,5}-?[0-9]{1,7}-?[0-9]{1,6}-?[0-9X]$R\x04isbn\x12 \n" +
 	"\x05title\x18\x03 \x01(\tB\n" +
 	"\xbaH\ar\x05\x10\x01\x18\xc8\x01R\x05title\x126\n" +
 	"\aauthors\x18\x04 \x03(\v2\x12.library.v1.AuthorB\b\xbaH\x05\x92\x01\x02\b\x01R\aauthors\x129\n" +

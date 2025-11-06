@@ -9,6 +9,8 @@ import (
 	"syscall"
 	"time"
 
+	"connectrpc.com/connect"
+	"connectrpc.com/validate"
 	"connectrpc.com/vanguard"
 	library_v1 "github.com/joematpal/library_rpc/internal/library/v1"
 	"github.com/joematpal/library_rpc/pkg/library/v1/library_v1connect"
@@ -24,7 +26,7 @@ func main() {
 	}
 	mux := http.NewServeMux()
 
-	libraryServicePath, libraryServiceHandler := library_v1connect.NewLibraryServiceHandler(libraryService)
+	libraryServicePath, libraryServiceHandler := library_v1connect.NewLibraryServiceHandler(libraryService, connect.WithInterceptors(validate.NewInterceptor()))
 
 	mux.Handle(libraryServicePath, libraryServiceHandler)
 	vangaurdLibraryService := vanguard.NewService(
