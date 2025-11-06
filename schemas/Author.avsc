@@ -1,0 +1,17 @@
+{
+  "type": "record",
+  "name": "Author",
+  "namespace": "library.v1",
+  "fields": [
+    {
+      "name": "given_name",
+      "type": "string",
+      "default": ""
+    },
+    {
+      "name": "family_name",
+      "type": "string",
+      "default": ""
+    }
+  ]
+}

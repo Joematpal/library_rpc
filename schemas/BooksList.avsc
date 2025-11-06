@@ -1,0 +1,70 @@
+{
+  "type": "record",
+  "name": "BooksList",
+  "namespace": "library.v1",
+  "fields": [
+    {
+      "name": "books",
+      "type": {
+        "type": "array",
+        "items": {
+          "type": "record",
+          "name": "Book",
+          "namespace": "library.v1",
+          "fields": [
+            {
+              "name": "book_id",
+              "type": "string",
+              "default": ""
+            },
+            {
+              "name": "isbn",
+              "type": "string",
+              "default": ""
+            },
+            {
+              "name": "title",
+              "type": "string",
+              "default": ""
+            },
+            {
+              "name": "authors",
+              "type": {
+                "type": "array",
+                "items": {
+                  "type": "record",
+                  "name": "Author",
+                  "namespace": "library.v1",
+                  "fields": [
+                    {
+                      "name": "given_name",
+                      "type": "string",
+                      "default": ""
+                    },
+                    {
+                      "name": "family_name",
+                      "type": "string",
+                      "default": ""
+                    }
+                  ]
+                }
+              },
+              "default": []
+            },
+            {
+              "name": "created_at",
+              "type": "long",
+              "default": 0
+            },
+            {
+              "name": "updated_at",
+              "type": "long",
+              "default": 0
+            }
+          ]
+        }
+      },
+      "default": []
+    }
+  ]
+}

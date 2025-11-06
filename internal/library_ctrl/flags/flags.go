@@ -10,8 +10,9 @@ const ()
 type Flag = string
 
 const (
-	Flag_author  = "author"
+	Flag_authors = "authors"
 	Flag_book_id = "book-id"
+	Flag_isbn    = "isbn"
 	Flag_server  = "server"
 	Flag_title   = "title"
 )
@@ -35,10 +36,16 @@ var (
 		Required: true,
 	}
 
-	Author = &cli.StringFlag{
-		Name:     Flag_author,
-		Aliases:  []string{"a"},
-		Usage:    "Book author",
+	Authors = &cli.StringSliceFlag{
+		Name:     Flag_authors,
+		Aliases:  []string{"a", "author"},
+		Usage:    "Book authors in format 'given_name family_name' (can specify multiple)",
+		Required: true,
+	}
+
+	ISBN = &cli.StringFlag{
+		Name:     Flag_isbn,
+		Usage:    "Book ISBN",
 		Required: true,
 	}
 

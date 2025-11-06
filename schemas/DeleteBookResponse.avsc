@@ -1,0 +1,12 @@
+{
+  "type": "record",
+  "name": "DeleteBookResponse",
+  "namespace": "library.v1",
+  "fields": [
+    {
+      "name": "success",
+      "type": "boolean",
+      "default": false
+    }
+  ]
+}

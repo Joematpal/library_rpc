@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package library.v1;
 
+import "buf/validate/validate.proto";
 import "google/api/annotations.proto";
 import "google/protobuf/timestamp.proto";
 
@@ -12,7 +13,7 @@ option go_package = "github.com/joematpal/library_rpc/pkg/library/v1;library_v1"
 // A simple service for managing books.
 service LibraryService {
   // Adds a new book to the library
-  rpc AddBook(AddBookRequest) returns (AddBookResponse) {
+  rpc AddBook(Book) returns (Book) {
     option (google.api.http) = {
         post: "/api/v1/books"
         body: "*"
@@ -20,18 +21,71 @@ service LibraryService {
   }
 
   // Gets a book by ID
-  rpc GetBook(GetBookRequest) returns (GetBookResponse) {
+  rpc GetBook(GetBookRequest) returns (Book) {
     option (google.api.http) = {
-        get: "/api/v1/books/{id}"
+        get: "/api/v1/books/{book_id}"
+    };
+  }
+
+  // Lists all books
+  rpc ListBooks(ListBooksRequest) returns (BooksList) {
+    option (google.api.http) = {
+        get: "/api/v1/books"
+    };
+  }
+
+  // Updates an existing book
+  rpc UpdateBook(Book) returns (Book) {
+    option (google.api.http) = {
+        put: "/api/v1/books/{book_id}"
+        body: "*"
+    };
+  }
+
+  // Deletes a book by ID
+  rpc DeleteBook(DeleteBookRequest) returns (DeleteBookResponse) {
+    option (google.api.http) = {
+        delete: "/api/v1/books/{book_id}"
+        body: "*"
     };
   }
 }
 
+// Author message
+message Author {
+  string given_name = 1 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 50
+  }];
+  string family_name = 2 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 50
+  }];
+}
+
 // Book message
 message Book {
-  string book_id = 1;
-  string title = 2;
-  string author = 3;
+  string book_id = 1;  // Internal database ID (generated)
+  
+  // ISBN validation - must be 10 or 13 digits (with optional hyphens)
+  string isbn = 2 [(buf.validate.field).string = {
+    pattern: "^(?:ISBN(?:-1[03])?:? )?(?=[0-9X]{10}$|(?=(?:[0-9]+[- ]){3})[- 0-9X]{13}$|97[89][0-9]{10}$|(?=(?:[0-9]+[- ]){4})[- 0-9]{17}$)(?:97[89][- ]?)?[0-9]{1,5}[- ]?[0-9]+[- ]?[0-9]+[- ]?[0-9X]$"
+    min_len: 10
+    max_len: 17
+  }];
+  
+  // Title validation - required, non-empty, max 200 characters
+  string title = 3 [(buf.validate.field).string = {
+    min_len: 1
+    max_len: 200
+  }];
+  
+  // Authors - at least one author required
+  repeated Author authors = 4 [(buf.validate.field).repeated.min_items = 1];
+  
+  // Timestamps for audit trail
+  google.protobuf.Timestamp created_at = 5;
+  google.protobuf.Timestamp updated_at = 6;
 }
 
 // Requests & responses
@@ -39,14 +93,26 @@ message AddBookRequest {
   Book book = 1;
 }
 
-message AddBookResponse {
-  string id = 1;
-}
 
 message GetBookRequest {
-  string id = 1;
+  string book_id = 1;
 }
 
-message GetBookResponse {
-  Book book = 1;
+message ListBooksRequest {
+  // Optional pagination parameters could be added here
+}
+
+message BooksList {
+  repeated Book books = 1;
+}
+
+
+
+
+message DeleteBookRequest {
+  string book_id = 1;
+}
+
+message DeleteBookResponse {
+  bool success = 1;
 }

@@ -37,14 +37,29 @@ const (
 	LibraryServiceAddBookProcedure = "/library.v1.LibraryService/AddBook"
 	// LibraryServiceGetBookProcedure is the fully-qualified name of the LibraryService's GetBook RPC.
 	LibraryServiceGetBookProcedure = "/library.v1.LibraryService/GetBook"
+	// LibraryServiceListBooksProcedure is the fully-qualified name of the LibraryService's ListBooks
+	// RPC.
+	LibraryServiceListBooksProcedure = "/library.v1.LibraryService/ListBooks"
+	// LibraryServiceUpdateBookProcedure is the fully-qualified name of the LibraryService's UpdateBook
+	// RPC.
+	LibraryServiceUpdateBookProcedure = "/library.v1.LibraryService/UpdateBook"
+	// LibraryServiceDeleteBookProcedure is the fully-qualified name of the LibraryService's DeleteBook
+	// RPC.
+	LibraryServiceDeleteBookProcedure = "/library.v1.LibraryService/DeleteBook"
 )
 
 // LibraryServiceClient is a client for the library.v1.LibraryService service.
 type LibraryServiceClient interface {
 	// Adds a new book to the library
-	AddBook(context.Context, *connect.Request[v1.AddBookRequest]) (*connect.Response[v1.AddBookResponse], error)
+	AddBook(context.Context, *connect.Request[v1.Book]) (*connect.Response[v1.Book], error)
 	// Gets a book by ID
-	GetBook(context.Context, *connect.Request[v1.GetBookRequest]) (*connect.Response[v1.GetBookResponse], error)
+	GetBook(context.Context, *connect.Request[v1.GetBookRequest]) (*connect.Response[v1.Book], error)
+	// Lists all books
+	ListBooks(context.Context, *connect.Request[v1.ListBooksRequest]) (*connect.Response[v1.BooksList], error)
+	// Updates an existing book
+	UpdateBook(context.Context, *connect.Request[v1.Book]) (*connect.Response[v1.Book], error)
+	// Deletes a book by ID
+	DeleteBook(context.Context, *connect.Request[v1.DeleteBookRequest]) (*connect.Response[v1.DeleteBookResponse], error)
 }
 
 // NewLibraryServiceClient constructs a client for the library.v1.LibraryService service. By
@@ -58,16 +73,34 @@ func NewLibraryServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 	baseURL = strings.TrimRight(baseURL, "/")
 	libraryServiceMethods := v1.File_library_v1_library_proto.Services().ByName("LibraryService").Methods()
 	return &libraryServiceClient{
-		addBook: connect.NewClient[v1.AddBookRequest, v1.AddBookResponse](
+		addBook: connect.NewClient[v1.Book, v1.Book](
 			httpClient,
 			baseURL+LibraryServiceAddBookProcedure,
 			connect.WithSchema(libraryServiceMethods.ByName("AddBook")),
 			connect.WithClientOptions(opts...),
 		),
-		getBook: connect.NewClient[v1.GetBookRequest, v1.GetBookResponse](
+		getBook: connect.NewClient[v1.GetBookRequest, v1.Book](
 			httpClient,
 			baseURL+LibraryServiceGetBookProcedure,
 			connect.WithSchema(libraryServiceMethods.ByName("GetBook")),
+			connect.WithClientOptions(opts...),
+		),
+		listBooks: connect.NewClient[v1.ListBooksRequest, v1.BooksList](
+			httpClient,
+			baseURL+LibraryServiceListBooksProcedure,
+			connect.WithSchema(libraryServiceMethods.ByName("ListBooks")),
+			connect.WithClientOptions(opts...),
+		),
+		updateBook: connect.NewClient[v1.Book, v1.Book](
+			httpClient,
+			baseURL+LibraryServiceUpdateBookProcedure,
+			connect.WithSchema(libraryServiceMethods.ByName("UpdateBook")),
+			connect.WithClientOptions(opts...),
+		),
+		deleteBook: connect.NewClient[v1.DeleteBookRequest, v1.DeleteBookResponse](
+			httpClient,
+			baseURL+LibraryServiceDeleteBookProcedure,
+			connect.WithSchema(libraryServiceMethods.ByName("DeleteBook")),
 			connect.WithClientOptions(opts...),
 		),
 	}
@@ -75,26 +108,50 @@ func NewLibraryServiceClient(httpClient connect.HTTPClient, baseURL string, opts
 
 // libraryServiceClient implements LibraryServiceClient.
 type libraryServiceClient struct {
-	addBook *connect.Client[v1.AddBookRequest, v1.AddBookResponse]
-	getBook *connect.Client[v1.GetBookRequest, v1.GetBookResponse]
+	addBook    *connect.Client[v1.Book, v1.Book]
+	getBook    *connect.Client[v1.GetBookRequest, v1.Book]
+	listBooks  *connect.Client[v1.ListBooksRequest, v1.BooksList]
+	updateBook *connect.Client[v1.Book, v1.Book]
+	deleteBook *connect.Client[v1.DeleteBookRequest, v1.DeleteBookResponse]
 }
 
 // AddBook calls library.v1.LibraryService.AddBook.
-func (c *libraryServiceClient) AddBook(ctx context.Context, req *connect.Request[v1.AddBookRequest]) (*connect.Response[v1.AddBookResponse], error) {
+func (c *libraryServiceClient) AddBook(ctx context.Context, req *connect.Request[v1.Book]) (*connect.Response[v1.Book], error) {
 	return c.addBook.CallUnary(ctx, req)
 }
 
 // GetBook calls library.v1.LibraryService.GetBook.
-func (c *libraryServiceClient) GetBook(ctx context.Context, req *connect.Request[v1.GetBookRequest]) (*connect.Response[v1.GetBookResponse], error) {
+func (c *libraryServiceClient) GetBook(ctx context.Context, req *connect.Request[v1.GetBookRequest]) (*connect.Response[v1.Book], error) {
 	return c.getBook.CallUnary(ctx, req)
+}
+
+// ListBooks calls library.v1.LibraryService.ListBooks.
+func (c *libraryServiceClient) ListBooks(ctx context.Context, req *connect.Request[v1.ListBooksRequest]) (*connect.Response[v1.BooksList], error) {
+	return c.listBooks.CallUnary(ctx, req)
+}
+
+// UpdateBook calls library.v1.LibraryService.UpdateBook.
+func (c *libraryServiceClient) UpdateBook(ctx context.Context, req *connect.Request[v1.Book]) (*connect.Response[v1.Book], error) {
+	return c.updateBook.CallUnary(ctx, req)
+}
+
+// DeleteBook calls library.v1.LibraryService.DeleteBook.
+func (c *libraryServiceClient) DeleteBook(ctx context.Context, req *connect.Request[v1.DeleteBookRequest]) (*connect.Response[v1.DeleteBookResponse], error) {
+	return c.deleteBook.CallUnary(ctx, req)
 }
 
 // LibraryServiceHandler is an implementation of the library.v1.LibraryService service.
 type LibraryServiceHandler interface {
 	// Adds a new book to the library
-	AddBook(context.Context, *connect.Request[v1.AddBookRequest]) (*connect.Response[v1.AddBookResponse], error)
+	AddBook(context.Context, *connect.Request[v1.Book]) (*connect.Response[v1.Book], error)
 	// Gets a book by ID
-	GetBook(context.Context, *connect.Request[v1.GetBookRequest]) (*connect.Response[v1.GetBookResponse], error)
+	GetBook(context.Context, *connect.Request[v1.GetBookRequest]) (*connect.Response[v1.Book], error)
+	// Lists all books
+	ListBooks(context.Context, *connect.Request[v1.ListBooksRequest]) (*connect.Response[v1.BooksList], error)
+	// Updates an existing book
+	UpdateBook(context.Context, *connect.Request[v1.Book]) (*connect.Response[v1.Book], error)
+	// Deletes a book by ID
+	DeleteBook(context.Context, *connect.Request[v1.DeleteBookRequest]) (*connect.Response[v1.DeleteBookResponse], error)
 }
 
 // NewLibraryServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -116,12 +173,36 @@ func NewLibraryServiceHandler(svc LibraryServiceHandler, opts ...connect.Handler
 		connect.WithSchema(libraryServiceMethods.ByName("GetBook")),
 		connect.WithHandlerOptions(opts...),
 	)
+	libraryServiceListBooksHandler := connect.NewUnaryHandler(
+		LibraryServiceListBooksProcedure,
+		svc.ListBooks,
+		connect.WithSchema(libraryServiceMethods.ByName("ListBooks")),
+		connect.WithHandlerOptions(opts...),
+	)
+	libraryServiceUpdateBookHandler := connect.NewUnaryHandler(
+		LibraryServiceUpdateBookProcedure,
+		svc.UpdateBook,
+		connect.WithSchema(libraryServiceMethods.ByName("UpdateBook")),
+		connect.WithHandlerOptions(opts...),
+	)
+	libraryServiceDeleteBookHandler := connect.NewUnaryHandler(
+		LibraryServiceDeleteBookProcedure,
+		svc.DeleteBook,
+		connect.WithSchema(libraryServiceMethods.ByName("DeleteBook")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/library.v1.LibraryService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case LibraryServiceAddBookProcedure:
 			libraryServiceAddBookHandler.ServeHTTP(w, r)
 		case LibraryServiceGetBookProcedure:
 			libraryServiceGetBookHandler.ServeHTTP(w, r)
+		case LibraryServiceListBooksProcedure:
+			libraryServiceListBooksHandler.ServeHTTP(w, r)
+		case LibraryServiceUpdateBookProcedure:
+			libraryServiceUpdateBookHandler.ServeHTTP(w, r)
+		case LibraryServiceDeleteBookProcedure:
+			libraryServiceDeleteBookHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -131,10 +212,22 @@ func NewLibraryServiceHandler(svc LibraryServiceHandler, opts ...connect.Handler
 // UnimplementedLibraryServiceHandler returns CodeUnimplemented from all methods.
 type UnimplementedLibraryServiceHandler struct{}
 
-func (UnimplementedLibraryServiceHandler) AddBook(context.Context, *connect.Request[v1.AddBookRequest]) (*connect.Response[v1.AddBookResponse], error) {
+func (UnimplementedLibraryServiceHandler) AddBook(context.Context, *connect.Request[v1.Book]) (*connect.Response[v1.Book], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("library.v1.LibraryService.AddBook is not implemented"))
 }
 
-func (UnimplementedLibraryServiceHandler) GetBook(context.Context, *connect.Request[v1.GetBookRequest]) (*connect.Response[v1.GetBookResponse], error) {
+func (UnimplementedLibraryServiceHandler) GetBook(context.Context, *connect.Request[v1.GetBookRequest]) (*connect.Response[v1.Book], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("library.v1.LibraryService.GetBook is not implemented"))
+}
+
+func (UnimplementedLibraryServiceHandler) ListBooks(context.Context, *connect.Request[v1.ListBooksRequest]) (*connect.Response[v1.BooksList], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("library.v1.LibraryService.ListBooks is not implemented"))
+}
+
+func (UnimplementedLibraryServiceHandler) UpdateBook(context.Context, *connect.Request[v1.Book]) (*connect.Response[v1.Book], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("library.v1.LibraryService.UpdateBook is not implemented"))
+}
+
+func (UnimplementedLibraryServiceHandler) DeleteBook(context.Context, *connect.Request[v1.DeleteBookRequest]) (*connect.Response[v1.DeleteBookResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("library.v1.LibraryService.DeleteBook is not implemented"))
 }

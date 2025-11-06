@@ -4,7 +4,7 @@
   "namespace": "library.v1",
   "fields": [
     {
-      "name": "id",
+      "name": "book_id",
       "type": "string",
       "default": ""
     }
